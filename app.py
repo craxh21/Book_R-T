@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 import json
 
-# local_server = True
+# Determine if the app is running locally or in production
+local_server = True
 
 with open('config.json', 'r') as c:  
     params = json.load(c)["params"] 
@@ -11,13 +12,14 @@ with open('config.json', 'r') as c:
 app = Flask(__name__)
 app.secret_key = 'the_random_string' 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://username:password@localhost/mydb'
+username = "regdb"
+app.config['SQLALCHEMY_DATABASE_URI'] = params['local_uri']
   
 db = SQLAlchemy(app)
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80),  nullable=False)
+    username = db.Column(db.String(80),  nullable=False)
     email = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(50), nullable=False)
 
@@ -28,15 +30,21 @@ def index():
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
     if(request.method == 'POST'):
+       
+        email = request.form.get('uemail') 
         username = request.form.get('uname')
-        email = request.form.get('uemail')
         password = request.form.get('upass')
+    
+        print("Username:", username)
+        print("Email:", email)
+        print("Password:", password)
 
         # making entry
         entry = Users(username=username, email = email, password = password)
         # adding the entry
         db.session.add(entry)
         db.session.commit()
+        return "User registered successfully!"
     return render_template('login.html')
 
 @app.route("/dashboard", methods = ['GET', 'POST'])
