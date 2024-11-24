@@ -10,11 +10,13 @@ with open('config.json', 'r') as c:
     params = json.load(c)["params"] 
 
 app = Flask(__name__)
+ # Secret key for securing sessions
 app.secret_key = 'the_random_string' 
 
 username = "regdb"
 app.config['SQLALCHEMY_DATABASE_URI'] = params['local_uri']
   
+  # Initialize SQLAlchemy for the Flask app
 db = SQLAlchemy(app)
 
 class Users(db.Model):
@@ -34,29 +36,57 @@ def register():
         email = request.form.get('uemail') 
         username = request.form.get('uname')
         password = request.form.get('upass')
-    
-        print("Username:", username)
-        print("Email:", email)
-        print("Password:", password)
 
-        # making entry
+        # check if user exists
+        exixting_user = Users.query.filter_by(email = email).first()
+        if(exixting_user):
+            return "Email already reg. Please login."
+
+        # Create a new user entry for the database
         entry = Users(username=username, email = email, password = password)
-        # adding the entry
+        # Add and commit the new user to the database
         db.session.add(entry)
         db.session.commit()
-        return "User registered successfully!"
+        # Set session for the logged-in user, with username 
+        session['user'] = username
+        # Redirect to the dashboard
+        return redirect(url_for('dashboard'))
+
     return render_template('login.html')
 
-@app.route("/dashboard", methods = ['GET', 'POST'])
-def dashboard():
-    return "this is dashboard"
+@app.route("/login", methods = ['GET', 'POST'])
+def login():
+    if(request.method == 'POST'):
+        username = request.form.get('uname')
+        password = request.form.get('upass')
 
-# @app.route("/login", methods = ['GET', 'POST'])
-# def login():
-#     if(request.method == 'POST'):
-#         #handle request
-#         pass
-#     return render_template('login.html')
+        # Query the database for the user
+        user = Users.query.filter_by(username = username).first()
+
+        # Check if user exists and password matches
+        if user and user.password == password:  # Replace with hashed password check later
+            # Set session for the logged-in user
+            session['user'] = user.username
+
+            # Redirect to the dashboard
+            return redirect(url_for('dashboard'))
+        else:
+            # Invalid credentials
+            return "Invalid username or password. Please try again."
+        
+    return render_template('login.html')
+
+@app.route("/dashboard", methods=['GET', 'POST'])
+def dashboard():
+    if 'user' in session:  # Check if user is logged in
+        username = session['user']
+        return f"Welcome to the dashboard, {username}!"
+
+    # If no user is logged in, redirect to login page
+    return redirect(url_for('login'))
+
+
+
 
 
 if __name__ == '__main__':
