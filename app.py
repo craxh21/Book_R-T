@@ -14,7 +14,6 @@ app = Flask(__name__)
  # Secret key for securing sessions
 app.secret_key = 'the_random_string' 
 
-username = "regdb"
 app.config['SQLALCHEMY_DATABASE_URI'] = params['local_uri']
   
   # Initialize SQLAlchemy for the Flask app
@@ -54,9 +53,9 @@ def register():
         # Set session for the logged-in user, with username 
         session['user'] = username
         # Redirect to the dashboard
-        return render_template('dashboard.html')
+        return redirect(url_for('dashboard'))
 
-    return render_template('login.html')
+    return render_template('login.html')  #url_for('login') translates the endpoint name (the function name in your code) to its corresponding URL path.
 
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
@@ -84,9 +83,14 @@ def login():
 def dashboard():
     if 'user' in session:  # Check if user is logged in
         username = session['user']
-        return f"Welcome to the dashboard, {username}!"
+        return render_template('dashboard.html', username=username)
 
     # If no user is logged in, redirect to login page
+    return redirect(url_for('login'))
+
+@app.route("/logout")
+def logout():
+    session.pop('user', None)# Clear the session
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
