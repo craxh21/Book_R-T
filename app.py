@@ -1,6 +1,7 @@
 from flask import Flask,render_template, request, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import requests ##to make HTTP requests to the API.
 
 import json
 
@@ -92,6 +93,46 @@ def dashboard():
 def logout():
     session.pop('user', None)# Clear the session
     return redirect(url_for('login'))
+
+
+@app.route("/recommend", methods=['GET', 'POST'])
+def recommend():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        genres = request.form.get('genres')  # User input
+        genre_list = [genre.strip() for genre in genres.split(',')]  # Split genres
+
+        # Initialize a list to hold recommended books
+        all_books = []
+
+        # Make an API call for each genre to get relevant books
+        for genre in genre_list:
+            response = requests.get(
+                params['api_link'],
+                params={"q": f"subject:{genre}", "key": params['api_key']}
+            )
+            if response.status_code == 200:
+                data = response.json()
+                # Parse and add books to the list
+                books = [
+                    {
+                        "title": item['volumeInfo']['title'],
+                        "author": item['volumeInfo'].get('authors', ['Unknown'])[0],
+                        "genre": ", ".join(item['volumeInfo'].get('categories', ['N/A']))
+                    }
+                    for item in data.get('items', [])
+                ]
+                all_books.extend(books)  # Add to the overall book list
+
+        # Remove duplicate books based on title
+        unique_books = {book['title']: book for book in all_books}.values()
+
+        return render_template('recommendations.html', books=unique_books)
+
+    return render_template('recommend_form.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
