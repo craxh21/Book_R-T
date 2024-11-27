@@ -95,8 +95,9 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route("/recommend", methods=['GET', 'POST'])
-def recommend():
+@app.route("/recommendByGenres", methods=['GET', 'POST'])
+def recommendByGenres():
+    # Ensure that the user is logged in before proceeding
     if 'user' not in session:
         return redirect(url_for('login'))
 
@@ -107,24 +108,30 @@ def recommend():
         # Initialize a list to hold recommended books
         all_books = []
 
-        # Make an API call for each genre to get relevant books
+        # # Loop through each genre and fetch books from the API
         for genre in genre_list:
+            query_type = "subject:" #as per google api
+            search_input = genre
+            # Construct the query parameter
+            query = f"{query_type}{search_input}"
+            
+            # Make an API call to get books related to the current genre
             response = requests.get(
                 params['api_link'],
-                params={"q": f"subject:{genre}", "key": params['api_key']}
+                params={"q": query, "key": params['api_key']} # Pass query and API key
             )
-            if response.status_code == 200:
+            if response.status_code == 200:# Check if the API request was successful
                 data = response.json()
                 # Parse and add books to the list
-                books = [
+                books = [ # Extract relevant book details (title, author, and genre/category)
                     {
                         "title": item['volumeInfo']['title'],
                         "author": item['volumeInfo'].get('authors', ['Unknown'])[0],
                         "genre": ", ".join(item['volumeInfo'].get('categories', ['N/A']))
                     }
-                    for item in data.get('items', [])
+                    for item in data.get('items', [])# Iterate over books in the response
                 ]
-                all_books.extend(books)  # Add to the overall book list
+                all_books.extend(books)  # Add the current genre's books to the overall list of recommendations
 
         # Remove duplicate books based on title
         unique_books = {book['title']: book for book in all_books}.values()
@@ -133,6 +140,45 @@ def recommend():
 
     return render_template('recommend_form.html')
 
+
+@app.route("/recommendByTitleOrAuthor", methods=['GET', 'POST'])
+def recommendByTitleOrAuthor():
+    # Ensure that the user is logged in before proceeding
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        search_input = request.form.get('search_input')  # User input
+        
+        # Determine whether the input is a title or an author
+        query_type = "intitle:" if request.form.get('search_type') == "title" else "inauthor:"
+
+        # Construct the query parameter
+        query = f"{query_type}{search_input}"
+
+        response = requests.get(
+                params['api_link'],
+                params={"q": query, "key": params['api_key']} # Pass query and API key
+            )
+        
+        if response.status_code == 200:# Check if the API request was successful
+            data = response.json()
+            # Parse and add books to the list
+            all_books = [ # Extract relevant book details (title, author, and genre/category)
+                {
+                    "title": item['volumeInfo']['title'],
+                    "author": item['volumeInfo'].get('authors', ['Unknown'])[0],
+                    "genre": ", ".join(item['volumeInfo'].get('categories', ['N/A']))
+                }
+                for item in data.get('items', [])# Iterate over books in the response
+            ]
+            # here all the books fetched are unique only
+            # as the search is using title or author and not by genres
+            return render_template('recommendations.html', books=all_books)
+
+        return "Error fetching data from the API. Please try again."
+
+    return render_template('recommend_form.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

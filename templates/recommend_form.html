@@ -1,17 +1,59 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Recommendation Form</title>
+    <title>Search Books</title>
+    <style>
+        .tab { cursor: pointer; padding: 10px 20px; background: #f0f0f0; display: inline-block; margin-right: 5px; }
+        .active-tab { background: #ccc; font-weight: bold; }
+        .tab-content { display: none; margin-top: 20px; }
+        .active-content { display: block; }
+    </style>
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active-content'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active-tab'));
+
+            // Show the selected tab's content
+            document.getElementById(tabName).classList.add('active-content');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active-tab');
+        }
+    </script>
 </head>
 <body>
-    <h1>Find Book Recommendations</h1>
-    <form action="/recommend" method="POST">
-        <label for="genres">Enter Genres (comma-separated):</label>
-        <input type="text" name="genres" placeholder="e.g., Fantasy, Mystery" required>
-        <button type="submit">Submit</button>
-    </form>
+    <h1>Search Books</h1>
+
+    <!-- Tabs -->
+    <div>
+        <div class="tab active-tab" data-tab="search-genre" onclick="switchTab('search-genre')">Search by Genre</div>
+        <div class="tab" data-tab="search-title-author" onclick="switchTab('search-title-author')">Search by Title/Author</div>
+    </div>
+
+    <!-- Search by Genre -->
+    <div id="search-genre" class="tab-content active-content">
+        <form method="POST" action="/recommendByGenres">
+            <label for="genres">Enter Genres (comma-separated):</label>
+            <input type="text" id="genres" name="genres" placeholder="Ex: fantasy, mystery" required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Search by Title or Author -->
+    <div id="search-title-author" class="tab-content">
+        <form method="POST" action="/recommendByTitleOrAuthor">
+            <label for="search_type">Search By:</label>
+            <select name="search_type" id="search_type">
+                <option value="title">Title</option>
+                <option value="author">Author</option>
+            </select>
+            <br>
+            <label for="search_input">Enter Title/Author:</label>
+            <input type="text" id="search_input" name="search_input" placeholder="Ex: Harry Potter" required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    
 </body>
 </html>
