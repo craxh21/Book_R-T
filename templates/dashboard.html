@@ -10,5 +10,19 @@
     <a href="/logout"><button >Logout</button></a> <br><br>
     <button onclick="window.location.href='/recommendByGenres'">Find Recommendations</button>
 
+    <button onclick="window.location.href='/addBook'">add a book</button>
+    <br><br><br>
+
+    {% for book in books %}
+    <div>
+        <h3>{{ book.title }}</h3>
+        <p>Author: {{ book.author }}</p>
+        <p>Status: {{ book.status }}</p>
+        <p>Start Date: {{ book.start_date }}</p>
+        <p>Notes: {{ book.notes }}</p>
+    </div>
+    {% else %}
+        <p>No books added yet.</p>
+    {% endfor %}
 </body>
 </html>

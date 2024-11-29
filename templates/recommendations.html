@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <title>Recommendations</title>
 </head>
 <body>
@@ -11,9 +12,16 @@
         <ul>
             {% for book in books %}
                 <li>
-                    <strong>{{ book.title }}</strong> by {{ book.author }} <br>
+                    <strong class="book-title">{{ book.title }}</strong> 
+                    <span class="book-author">by {{ book.author }} </span>
+                        <br>
                     Genres: {{ book.genre }}
                 </li>
+                <p><strong>Description:</strong> {{ book.description }}</p>
+                {% if book.thumbnail %}
+                    <img src="{{ book.thumbnail }}" alt="Book Cover">
+                {% endif %}
+                <br><br>
             {% endfor %}
         </ul>
     {% else %}
