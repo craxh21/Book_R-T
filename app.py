@@ -23,7 +23,7 @@ db = SQLAlchemy(app)
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80),  nullable=False)
+    username = db.Column(db.String(80),unique= True,  nullable=False)
     email = db.Column(db.String(100),unique= True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
 
@@ -73,11 +73,11 @@ def register():
         # Add and commit the new user to the database
         db.session.add(entry)
         db.session.commit()
-        # Set session for the logged-in user, with username 
+        # Set session variables for the logged-in user, with username 
         session['user_id'] = entry.id
         session['user'] = username
-        # Redirect to the dashboard
-        return redirect(url_for('dashboard'))
+       
+        return redirect(url_for('dashboard')) # Redirect to the dashboard
 
     return render_template('login.html')  #url_for('login') translates the endpoint name (the function name in your code) to its corresponding URL path.
 
@@ -210,6 +210,7 @@ def dashboard():
     # Format the book data to pass to the template
     books = [
         {
+            "id":user_book.id,
             "title": user_book.book.title,  # Access the related book's name
             "author": user_book.book.author,  # Access the related book's author
             "start_date": user_book.start_date,
@@ -235,16 +236,16 @@ def addBook():
         # Check if the book already exists in the Books table
         book = Books.query.filter_by(title=title, author=author).first()
 
-        if not book:
+        if not book:    #if book not in db than add it
             book = Books(title = title, author = author)
             db.session.add(book)
             db.session.commit()
 
-         # Retrieve the book_id from the Books table
+        # Retrieve the book_id from the Books table and user_id from the curr session
         book_id = book.id
+        user_id = session['user_id']
 
         # Check if the user already has this book in their dashboard
-        user_id = session['user_id']
         user_book = UserBooks.query.filter_by(user_id=user_id, book_id=book_id).first()
         if not user_book:
             # add entry in the USerBooks table
@@ -255,6 +256,17 @@ def addBook():
         return redirect(url_for('dashboard'))
 
     return render_template('add_book.html')
+
+@app.route("/delete/<string:id>", methods = ['GET', 'POST'])
+def deleteBook(id):
+    if 'user' in session:
+        user_book = UserBooks.query.filter_by(id = id).first()
+        print("id is: ",id)
+        db.session.delete(user_book)
+        db.session.commit()
+    return redirect('/dashboard')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

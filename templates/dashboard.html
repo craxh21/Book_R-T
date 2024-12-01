@@ -3,26 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/styles.css')  }}">
 </head>
 <body>
-    welcome to dashboard {{username}}   <br>
-    <a href="/logout"><button >Logout</button></a> <br><br>
-    <button onclick="window.location.href='/recommendByGenres'">Find Recommendations</button>
+    <header class="dashboard-header">
+        <h1>Welcome to Dashboard, {{ username }}</h1>
+        <a href="/logout"><button class="dashboard-btn-logout">Logout</button></a>
+    </header>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-actions-top">
+            <button class="dashboard-btn" onclick="window.location.href='/recommendByGenres'">Find Recommendations</button>
+        </div>
 
-    <button onclick="window.location.href='/addBook'">add a book</button>
-    <br><br><br>
-
-    {% for book in books %}
-    <div>
-        <h3>{{ book.title }}</h3>
-        <p>Author: {{ book.author }}</p>
-        <p>Status: {{ book.status }}</p>
-        <p>Start Date: {{ book.start_date }}</p>
-        <p>Notes: {{ book.notes }}</p>
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>Notes</th>
+                    <th>Bookmark Page</th>
+                    <th>Last Read On</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.status }}</td>
+                    <td>{{ book.start_date }}</td>
+                    <td>{{ book.notes }}</td>
+                    <td>{{ book.bookmark_page_no }}</td>
+                    <td>{{ book.last_read_datetime }}</td>
+                    <td><a href="/delete/{{ book.id }}"><button class="dashboard-btn-delete">Del</button></a></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="dashboard-no-books">No books added yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <div class="dashboard-actions">
+           <button class="dashboard-btn" onclick="window.location.href='/addBook'">Add a Book</button>
+        </div>
     </div>
-    {% else %}
-        <p>No books added yet.</p>
-    {% endfor %}
+    <br><br><br>
+    <footer class="dashboard-footer">
+        <p>© 2024 Book Tracker App</p>
+    </footer>
 </body>
 </html>

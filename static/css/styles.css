@@ -9,3 +9,129 @@
     color: green;
     font-style: italic;
 }
+
+/* Dashboard Styles */
+
+/* Header */
+.dashboard-header {
+    background-color: #006735;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+}
+
+/* Logout Button - Top Right */
+.dashboard-btn-logout {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.dashboard-btn-logout:hover {
+    background-color: #c82333;
+}
+
+/* Container */
+.dashboard-container {
+    width: 90%;
+    margin: auto;
+    padding: 20px 0;
+}
+
+/* Top Actions (Find Recommendations) */
+.dashboard-actions-top {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Action Buttons */
+.dashboard-actions, .dashboard-actions-top {
+    text-align: center;
+}
+
+.dashboard-btn {
+    background-color: #50ff8d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.dashboard-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Table */
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-table thead {
+    background-color: #006735;
+    color: white;
+}
+
+.dashboard-table th, .dashboard-table td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.dashboard-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.dashboard-table th {
+    font-size: 18px;
+}
+
+.dashboard-btn-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.dashboard-btn-delete:hover {
+    background-color: #c82333;
+}
+
+.dashboard-no-books {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+}
+
+/* Footer */
+.dashboard-footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #1a7a00;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
