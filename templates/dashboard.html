@@ -27,6 +27,7 @@
                     <th>Notes</th>
                     <th>Bookmark Page</th>
                     <th>Last Read On</th>
+                    <th>Times read</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -35,11 +36,24 @@
                 <tr>
                     <td>{{ book.title }}</td>
                     <td>{{ book.author }}</td>
-                    <td>{{ book.status }}</td>
+                    <td>
+                        <form action="/update_status/{{ book.id }}" method="POST" class="dashboard-status-form">
+                            <select name="status" class="dashboard-status-dropdown" onchange="this.form.submit()">
+                                <option value="reading" {% if book.status == 'reading' %}selected{% endif %}>Reading</option>
+                                <option value="completed" {% if book.status == 'completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                        </form>
+                    </td>                    
                     <td>{{ book.start_date }}</td>
-                    <td>{{ book.notes }}</td>
+                    <td>
+                        <form action="/update_notes/{{ book.id }}" method="POST" class="dashboard-notes-form">
+                            <textarea name="notes" class="dashboard-notes-textarea" rows="2" 
+                                      placeholder="Add notes..." onchange="this.form.submit()">{{ book.notes }}</textarea>
+                        </form>
+                    </td>
                     <td>{{ book.bookmark_page_no }}</td>
                     <td>{{ book.last_read_datetime }}</td>
+                    <td>{{ book.times_read }}</td>
                     <td><a href="/delete/{{ book.id }}"><button class="dashboard-btn-delete">Del</button></a></td>
                 </tr>
                 {% else %}

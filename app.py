@@ -44,6 +44,7 @@ class UserBooks(db.Model):
     bookmark_page_no = db.Column(db.Integer)
     last_read_datetime = db.Column(db.DateTime)
     notes = db.Column(db.Text)
+    times_read = db.Column(db.Integer)
 
     # Define the relationship to the Books model
     book = db.relationship('Books', backref='user_books')
@@ -218,6 +219,7 @@ def dashboard():
             "bookmark_page_no": user_book.bookmark_page_no,
             "last_read_datetime": user_book.last_read_datetime,
             "notes": user_book.notes,
+            "times_read": user_book.times_read,
         }
         for user_book in user_books
     ]
@@ -257,16 +259,49 @@ def addBook():
 
     return render_template('add_book.html')
 
-@app.route("/delete/<string:id>", methods = ['GET', 'POST'])
+
+@app.route("/delete/<int:id>", methods = ['GET', 'POST'])
 def deleteBook(id):
-    if 'user' in session:
-        user_book = UserBooks.query.filter_by(id = id).first()
-        print("id is: ",id)
-        db.session.delete(user_book)
-        db.session.commit()
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    user_book = UserBooks.query.filter_by(id = id).first()
+    db.session.delete(user_book)
+    db.session.commit()
+
     return redirect('/dashboard')
 
+@app.route("/update_status/<int:id>", methods=["POST"])
+def update_status(id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
 
+    # Get the new status from the form
+    new_status = request.form.get('status')
+
+    # Update the status for the specific book and user
+    user_book = UserBooks.query.filter_by(id=id, user_id=session['user_id']).first()
+    if user_book:
+        user_book.status = new_status
+        db.session.commit()
+
+    return redirect(url_for('dashboard'))
+
+@app.route("/update_notes/<int:id>", methods=["POST"])
+def update_notes(id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    # Get the new status from the form
+    new_note = request.form.get('notes')
+
+    # Update the status for the specific book and user
+    user_book = UserBooks.query.filter_by(id=id, user_id=session['user_id']).first()
+    if user_book:
+        user_book.notes = new_note
+        db.session.commit()
+
+    return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
     app.run(debug=True)
