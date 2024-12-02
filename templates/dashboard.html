@@ -52,7 +52,19 @@
                         </form>
                     </td>
                     <td>{{ book.bookmark_page_no }}</td>
-                    <td>{{ book.last_read_datetime }}</td>
+                    <td>
+                        <form action="/update_last_read/{{ book.id }}" method="POST" class="dashboard-datetime-form">
+                            <input 
+                                type="datetime-local"   
+                                name="last_read_datetime" 
+                                class="dashboard-datetime-input" 
+                                value="{{ book.last_read_datetime|datetimeformat }}" 
+                                max="{{ current_datetime|datetimeformat }}"
+                                onchange="this.form.submit()"
+                            />
+                        </form>
+                    </td>
+                    
                     <td>{{ book.times_read }}</td>
                     <td><a href="/delete/{{ book.id }}"><button class="dashboard-btn-delete">Del</button></a></td>
                 </tr>

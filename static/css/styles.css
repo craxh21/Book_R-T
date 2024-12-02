@@ -135,3 +135,67 @@
     bottom: 0;
     width: 100%;
 }
+
+.dashboard-notes-form {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+.dashboard-notes-textarea {
+    width: 100%;
+    font-size: 14px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    resize: none; /* Prevent resizing */
+}
+
+.dashboard-datetime-form {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+.dashboard-datetime-input {
+    width: 100%;
+    font-size: 14px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+/* Container for the datetime-local and Save button */
+.datetime-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: start; /* Align content to the start */
+    gap: 5px; /* Space between the input and the button */
+}
+
+/* Styling for the datetime-local input */
+.dashboard-datetime-input {
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Styling for the Save button */
+.dashboard-btn-save {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+    width: 100%; /* Full width of the container */
+    text-align: center;
+}
+
+.dashboard-btn-save:hover {
+    background-color: #45a049;
+}

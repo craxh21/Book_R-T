@@ -1,4 +1,4 @@
-from flask import Flask,render_template, request, session, redirect, url_for
+from flask import Flask,render_template, request, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests ##to make HTTP requests to the API.
@@ -13,13 +13,12 @@ with open('config.json', 'r') as c:
     params = json.load(c)["params"] 
 
 app = Flask(__name__)
- # Secret key for securing sessions
-app.secret_key = 'the_random_string' 
+ 
+app.secret_key = 'the_random_string' # Secret key for securing sessions
 
 app.config['SQLALCHEMY_DATABASE_URI'] = params['local_uri']
   
-  # Initialize SQLAlchemy for the Flask app
-db = SQLAlchemy(app)
+db = SQLAlchemy(app)# Initialize SQLAlchemy for the Flask app
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -259,7 +258,6 @@ def addBook():
 
     return render_template('add_book.html')
 
-
 @app.route("/delete/<int:id>", methods = ['GET', 'POST'])
 def deleteBook(id):
     if 'user' not in session:
@@ -302,6 +300,49 @@ def update_notes(id):
         db.session.commit()
 
     return redirect(url_for('dashboard'))
+
+@app.route("/update_last_read/<int:id>", methods=["POST"])
+def update_last_read(id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    # Get the new datetime value from the form
+    new_datetime_str = request.form.get('last_read_datetime')
+
+    if new_datetime_str:
+        try:
+            # Convert the string to a datetime object
+            new_datetime = datetime.strptime(new_datetime_str, "%Y-%m-%dT%H:%M")
+            '''# strptime stands for String Parse Time.
+                It takes two arguments: new_datetime_str (The date-time string to be parsed)
+                "%Y-%m-%dT%H:%M" (The format specifying how the string is structured)       '''
+
+            """Logic to handle the future date and time input."""
+            current_datetime = datetime.now()
+
+            # Check if the date-time is in the future
+            if new_datetime > current_datetime:
+                flash("Error: The 'last read' date cannot be in the future.", "error")
+                return redirect(url_for('dashboard'))
+
+            # Update the `last_read_datetime` for the specific book and user
+            user_book = UserBooks.query.filter_by(id=id, user_id=session['user_id'] ).first()
+            if user_book:
+                user_book.last_read_datetime = new_datetime
+                db.session.commit()
+                return redirect( url_for('dashboard') )
+            else:
+                return "Book not found for the current user.", 404
+        except ValueError:  # handle potential ValueError if the datetime.strptime fails.
+            return "Invalid date format.", 400
+
+    return "No date provided.", 400
+
+@app.template_filter('datetimeformat')
+def datetimeformat(value):
+    if value:
+        return value.strftime("%Y-%m-%dT%H:%M")
+    return ""
 
 if __name__ == '__main__':
     app.run(debug=True)
