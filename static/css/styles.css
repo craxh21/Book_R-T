@@ -199,3 +199,30 @@
 .dashboard-btn-save:hover {
     background-color: #45a049;
 }
+
+.top-right-button {
+    position: absolute; /* Position the container */
+    top: 10px; /* Adjust top margin */
+    right: 10px; /* Adjust right margin */
+}
+
+.dashboard-btn {
+    background-color: #007BFF; /* Primary blue color */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding for better button appearance */
+    font-size: 16px; /* Font size */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.dashboard-btn:hover {
+    background-color: #0056b3; /* Darker shade of blue on hover */
+}
+
+.dashboard-btn:active {
+    background-color: #004494; /* Even darker shade on click */
+    transform: scale(0.98); /* Slightly shrink button on click */
+}

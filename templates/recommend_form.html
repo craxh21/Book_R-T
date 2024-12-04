@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/styles.css')  }}">
+    
     <title>Search Books</title>
     <style>
         .tab { cursor: pointer; padding: 10px 20px; background: #f0f0f0; display: inline-block; margin-right: 5px; }
@@ -25,6 +27,12 @@
 <body>
     <h1>Search Books</h1>
 
+    <div class="top-right-button">
+        <form action="{{ url_for('dashboard') }}">
+            <button class="dashboard-btn">Go to Dashboard</button>
+        </form>
+    </div>
+    
     <!-- Tabs -->
     <div>
         <div class="tab active-tab" data-tab="search-genre" onclick="switchTab('search-genre')">Search by Genre</div>

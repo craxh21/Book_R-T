@@ -152,7 +152,7 @@ def recommendByGenres():
         # Remove duplicate books based on title
         unique_books = {book['title']: book for book in all_books}.values()
 
-        return render_template('recommendations.html', books=unique_books)
+        return render_template('recommendations.html', books=unique_books, search_criteria=genres)
 
     return render_template('recommend_form.html')
 
@@ -191,7 +191,7 @@ def recommendByTitleOrAuthor():
             ]
             # here all the books fetched are unique only
             # as the search is using title or author and not by genres
-            return render_template('recommendations.html', books=all_books)
+            return render_template('recommendations.html', books=all_books, search_criteria=search_input)
 
         return "Error fetching data from the API. Please try again."
 
@@ -257,6 +257,38 @@ def addBook():
         return redirect(url_for('dashboard'))
 
     return render_template('add_book.html')
+
+@app.route("/addBookFromRecommendation", methods=["POST"])
+def addBookFromRecommendation():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    # Get title and author from the form
+    title = request.form.get('title')
+    author = request.form.get('author')
+
+    # Check if the book already exists in the Books table
+    book = Books.query.filter_by(title=title, author=author).first()
+
+    if not book:  # If the book is not found, add it to the Books table
+        book = Books(title=title, author=author)
+        db.session.add(book)
+        db.session.commit()
+
+    # Retrieve the book ID and current user ID
+    book_id = book.id
+    user_id = session['user_id']
+
+    # Check if the book is already associated with the user
+    user_book = UserBooks.query.filter_by(user_id=user_id, book_id=book_id).first()
+
+    if not user_book:  # If not, add it to the UserBooks table
+        user_book = UserBooks(user_id=user_id, book_id=book_id, start_date=datetime.now())
+        db.session.add(user_book)
+        db.session.commit()
+
+    flash(f"The book '{title}' has been added to your dashboard.", "success")
+    return redirect(url_for('recommendByGenres'))
 
 @app.route("/delete/<int:id>", methods = ['GET', 'POST'])
 def deleteBook(id):

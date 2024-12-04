@@ -3,30 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recommendations.css') }}">
     <title>Recommendations</title>
 </head>
 <body>
-    <h1>Recommended Books</h1>
-    {% if books %}
-        <ul>
-            {% for book in books %}
-                <li>
-                    <strong class="book-title">{{ book.title }}</strong> 
-                    <span class="book-author">by {{ book.author }} </span>
-                        <br>
-                    Genres: {{ book.genre }}
-                </li>
-                <p><strong>Description:</strong> {{ book.description }}</p>
-                {% if book.thumbnail %}
-                    <img src="{{ book.thumbnail }}" alt="Book Cover">
-                {% endif %}
-                <br><br>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No books found matching your preferences.</p>
-    {% endif %}
+    <!-- Display Search Criteria -->
+    <div class="search-criteria">
+        <h2>Recommended Books for <span style="font-size: 20px; font-family: 'Courier New', Courier, monospace; color: chocolate;">{{search_criteria}}</span></h2>
+    </div>
 
+    <!--Book List-->
+    <div class="book-list">
+        {% if books %}
+            {% for book in books %}
+                <div class="book-card">
+                    {% if book.thumbnail %}
+                        <img src="{{ book.thumbnail }}" alt="Book Cover" class="book-thumbnail">
+                    {% endif %}
+                    <p class="book-title">{{ book.title }}</p>
+                    <p class="book-author">by {{ book.author }}</p>
+                    <p class="book-genre">Genres: {{ book.genre }}</p>
+                    <p class="book-description" title="{{ book.description }}">
+                        <strong>Description:</strong> {{ book.description }}
+                    </p>
+                    <form method="POST" action="{{ url_for('addBookFromRecommendation') }}">
+                        <input type="hidden" name="title" value="{{ book.title }}">
+                        <input type="hidden" name="author" value="{{ book.author }}">
+                        <button type="submit" class="add-btn">Add to My Books</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; font-size: 1.2em; color: #666;">No books found matching your preferences.</p>
+        {% endif %}
+    </div>
+    <footer>
+        <p>© 2024 Book Tracker App - All rights reserved.</p>
+    </footer>
 </body>
 </html>

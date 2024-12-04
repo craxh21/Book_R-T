@@ -1,0 +1,110 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2.5em;
+    color: #444;
+}
+
+/* Book List Container */
+.book-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px;
+    gap: 15px;
+}
+
+/* Book Card */
+.book-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 240px; /* Reduced width */
+    padding: 12px; /* Reduced padding */
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.book-thumbnail {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px; /* Reduced margin */
+}
+
+.book-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.book-author {
+    font-size: 0.85em;
+    color: #555;
+}
+
+.book-genre {
+    font-size: 0.8em;
+    font-style: italic;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+/* Truncated Description */
+.book-description {
+    margin-top: 8px;
+    font-size: 0.85em;
+    color: #555;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit description to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #222;
+    color: #fff;
+    margin-top: 30px;
+}
+
+/* Search Criteria Styles */
+.search-criteria {
+    margin: 20px auto;
+    max-width: 800px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+    font-size: 1em;
+    color: #333;
+}
+
+.search-criteria h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.search-criteria p {
+    margin: 5px 0;
+}
