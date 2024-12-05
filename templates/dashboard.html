@@ -14,7 +14,12 @@
     
     <div class="dashboard-container">
         <div class="dashboard-actions-top">
-            <button class="dashboard-btn" onclick="window.location.href='/recommendByGenres'">Find Recommendations</button>
+            <button class="dashboard-btn" onclick="window.location.href='/recommendByGenres'">
+                <span>🔍</span> Find Recommendations
+              </button>
+              <button class="dashboard-btn" onclick="window.location.href='/addBook'">
+                <span>➕</span> Add a Book
+              </button>
         </div>
 
         <table class="dashboard-table">
@@ -47,10 +52,22 @@
                     <td>{{ book.start_date }}</td>
                     <td>
                         <form action="/update_notes/{{ book.id }}" method="POST" class="dashboard-notes-form">
-                            <textarea name="notes" class="dashboard-notes-textarea" rows="2" 
-                                      placeholder="Add notes..." onchange="this.form.submit()">{{ book.notes }}</textarea>
+                          <textarea 
+                            name="notes" 
+                            class="dashboard-notes-textarea" 
+                            rows="2" 
+                            placeholder="Add notes..." 
+                            onchange="this.form.submit()" 
+                            onclick="openPopup(this)">{{ book.notes }}</textarea>
                         </form>
-                    </td>
+                      </td>
+                      
+                      <!-- Popup container -->
+                      <div id="textarea-popup" class="popup-container">
+                        <textarea id="popup-textarea" rows="10" placeholder="Edit notes here..."></textarea>
+                        <button onclick="closePopup()">Save</button>
+                      </div>
+                      
                     <td>{{ book.bookmark_page_no }}</td>
                     <td>
                         <form action="/update_last_read/{{ book.id }}" method="POST" class="dashboard-datetime-form">
@@ -76,9 +93,39 @@
             </tbody>
         </table>
         <br>
-        <div class="dashboard-actions">
-           <button class="dashboard-btn" onclick="window.location.href='/addBook'">Add a Book</button>
-        </div>
+        <script>
+            function openPopup(textarea) {
+              const popup = document.getElementById('textarea-popup');
+              const popupTextarea = document.getElementById('popup-textarea');
+          
+              // Populate the popup with the current textarea value
+              popupTextarea.value = textarea.value;
+          
+              // Show the popup and overlay
+              popup.style.display = 'block';
+              document.body.insertAdjacentHTML(
+                'beforeend',
+                '<div class="popup-overlay" onclick="closePopup()"></div>'
+              );
+              document.querySelector('.popup-overlay').style.display = 'block';
+          
+              // Focus on the popup textarea
+              popupTextarea.focus();
+          
+              // Save changes when the popup is closed
+              popupTextarea.oninput = function () {
+                textarea.value = popupTextarea.value;
+              };
+            }
+          
+            function closePopup() {
+              // Hide the popup and overlay
+              document.getElementById('textarea-popup').style.display = 'none';
+              const overlay = document.querySelector('.popup-overlay');
+              if (overlay) overlay.remove();
+            }
+          </script>
+          
     </div>
     <br><br><br>
     <footer class="dashboard-footer">
